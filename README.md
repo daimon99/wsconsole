@@ -1,5 +1,7 @@
 A websocket console.
 
+Using browser to control your machine with cmd tools.
+
 You can use this console to remote control your machine.
 
 # Requires
