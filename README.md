@@ -1,4 +1,4 @@
-An websocket console.
+A websocket console.
 
 You can use this console to remote control your machine.
 
@@ -14,13 +14,13 @@ pyvenv env
 pip install -r requirements.txt
 ```
 
-# run
+# Run
 
 ```bash
 cd src && python server.py
 ```
 
-# usage
+# Usage
 
 1. Set your connect pin
     

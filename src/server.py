@@ -59,7 +59,6 @@ class AuthProtocol(websockets.WebSocketServerProtocol):
                 html = f.read()
             return OK, [], html
         if path != '/ws/?pin=%s' % PIN:
-            print(request_headers, request_headers['Sec-WebSocket-Protocol'])
             return UNAUTHORIZED, []
         else:
             return None
