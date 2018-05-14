@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>ws-console</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <style>
+        .head {
+            margin: 40px;
+        }
+
+        .cmd {
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+
+<div id="app">
+    <div class="head">
+        <input v-model="url" style="margin-bottom: 20px; width: 50%">
+        <input v-model="pin" style="margin-bottom: 20px">
+        <textarea v-model="message" @keyup.enter="send" class="cmd">
+        </textarea>
+    </div>
+    <ul>
+        <li v-for="m in history">
+            <pre>{{ m }}</pre>
+        </li>
+    </ul>
+</div>
+
+
+<script>
+    var app = new Vue({
+        el: '#app',
+        data: {
+            message: 'pwd',
+            history: [],
+            url: 'ws://@127.0.0.1:5678/ws/',
+            pin: '123456'
+        },
+        created: function () {
+            this.conn()
+        },
+        methods: {
+            'conn': function () {
+                var that = this
+                if (this.ws && this.ws.readyState == 1) {
+                    this.ws.close()
+                }
+                this.ws = new WebSocket(this.url + "?pin=" + this.pin);
+                this.ws.onerror = function (error) {
+                    that.history.unshift('Unauthorized')
+                }
+                this.ws.onmessage = function (event) {
+                    that.history.unshift(event.data)
+                }
+                window.ws = this.ws
+                this.history.unshift('Server connected.')
+            },
+            'send': function () {
+                console.log(this.message)
+                var cmd = this.message.trim()
+                if (cmd.toUpperCase() == 'CLEAR') {
+                    this.history.length = 0
+                    this.message = ''
+                } else if (cmd.toUpperCase() == 'CONN') {
+                    this.conn()
+                    this.message = ''
+                } else {
+                    if (this.ws.readyState == 1) {
+                        this.ws.send(cmd)
+                        this.message = ''
+                    } else {
+                        this.history.unshift('Server down. Auto connect in 5 seconds.')
+                        setTimeout(this.conn, 5000)
+                    }
+                }
+
+            }
+        }
+
+    })
+</script>
+</body>
+</html>
